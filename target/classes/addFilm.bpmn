@@ -5,7 +5,7 @@
       <bpmn:extensionElements />
       <bpmn:outgoing>Flow_139t2g5</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="Activity_0s8taci" name="input film data" camunda:assignee="#{currentUser}">
+    <bpmn:userTask id="Activity_0s8taci" name="input film data" camunda:assignee="#{login}">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="name" label="Name" type="string" />

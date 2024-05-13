@@ -1,18 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_03wq3pu" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.22.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.21.0">
+  <bpmn:collaboration id="Collaboration_07bto8x">
+    <bpmn:participant id="Participant_07ysz10" name="Delete film" processRef="deleteFilm" />
+  </bpmn:collaboration>
   <bpmn:process id="deleteFilm" name="deleteFilm" isExecutable="true" camunda:historyTimeToLive="180">
-    <bpmn:startEvent id="StartEvent_1" name="deleteFilm">
-      <bpmn:outgoing>Flow_0ucr6tq</bpmn:outgoing>
-    </bpmn:startEvent>
-    <bpmn:userTask id="Activity_0m54swm" name="input film token">
+    <bpmn:laneSet id="LaneSet_0zo0of8">
+      <bpmn:lane id="Lane_1mz7wks" name="User">
+        <bpmn:flowNodeRef>Activity_0m54swm</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1u3kgy8</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_10oh7ho" name="Service">
+        <bpmn:flowNodeRef>Activity_078esu0</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1odapxj</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_02l1qlw</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:userTask id="Activity_0m54swm" name="input film token" camunda:assignee="#{login}">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="token" label="Token" type="string" />
         </camunda:formData>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0ucr6tq</bpmn:incoming>
+      <bpmn:incoming>Flow_1rarmfx</bpmn:incoming>
       <bpmn:outgoing>Flow_1s9dt1y</bpmn:outgoing>
     </bpmn:userTask>
+    <bpmn:userTask id="Activity_1u3kgy8" name="check auth">
+      <bpmn:extensionElements>
+        <camunda:taskListener expression="${task.execution.setVariable(&#39;login&#39;, task.assignee)}" event="complete" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ck0bm4</bpmn:incoming>
+      <bpmn:outgoing>Flow_1u0ze7e</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0ck0bm4" sourceRef="StartEvent_1" targetRef="Activity_1u3kgy8" />
+    <bpmn:sequenceFlow id="Flow_1s9dt1y" sourceRef="Activity_0m54swm" targetRef="Activity_1odapxj" />
+    <bpmn:sequenceFlow id="Flow_068ruz7" sourceRef="Activity_1odapxj" targetRef="Event_02l1qlw" />
+    <bpmn:sequenceFlow id="Flow_1rarmfx" sourceRef="Activity_078esu0" targetRef="Activity_0m54swm" />
+    <bpmn:sequenceFlow id="Flow_1u0ze7e" sourceRef="Activity_1u3kgy8" targetRef="Activity_078esu0" />
+    <bpmn:startEvent id="StartEvent_1" name="deleteFilm">
+      <bpmn:outgoing>Flow_0ck0bm4</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_078esu0" name="authorization" camunda:delegateExpression="#{authorization}">
+      <bpmn:incoming>Flow_1u0ze7e</bpmn:incoming>
+      <bpmn:outgoing>Flow_1rarmfx</bpmn:outgoing>
+    </bpmn:serviceTask>
     <bpmn:serviceTask id="Activity_1odapxj" name="delete film" camunda:delegateExpression="#{deleteFilm}">
       <bpmn:incoming>Flow_1s9dt1y</bpmn:incoming>
       <bpmn:outgoing>Flow_068ruz7</bpmn:outgoing>
@@ -20,40 +51,71 @@
     <bpmn:endEvent id="Event_02l1qlw">
       <bpmn:incoming>Flow_068ruz7</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_068ruz7" sourceRef="Activity_1odapxj" targetRef="Event_02l1qlw" />
-    <bpmn:sequenceFlow id="Flow_1s9dt1y" sourceRef="Activity_0m54swm" targetRef="Activity_1odapxj" />
-    <bpmn:sequenceFlow id="Flow_0ucr6tq" sourceRef="StartEvent_1" targetRef="Activity_0m54swm" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="deleteFilm">
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
-        <dc:Bounds x="179" y="99" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="171" y="142" width="52" height="14" />
-        </bpmndi:BPMNLabel>
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_07bto8x">
+      <bpmndi:BPMNShape id="Participant_07ysz10_di" bpmnElement="Participant_07ysz10" isHorizontal="true">
+        <dc:Bounds x="129" y="57" width="850" height="250" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1mz7wks_di" bpmnElement="Lane_1mz7wks" isHorizontal="true">
+        <dc:Bounds x="159" y="57" width="820" height="125" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_10oh7ho_di" bpmnElement="Lane_10oh7ho" isHorizontal="true">
+        <dc:Bounds x="159" y="182" width="820" height="125" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0m54swm_di" bpmnElement="Activity_0m54swm">
-        <dc:Bounds x="280" y="77" width="100" height="80" />
+        <dc:Bounds x="580" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1ycypcs" bpmnElement="Activity_1u3kgy8">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="202" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="194" y="142" width="52" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1guda3k" bpmnElement="Activity_078esu0">
+        <dc:Bounds x="420" y="200" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1odapxj_di" bpmnElement="Activity_1odapxj">
-        <dc:Bounds x="470" y="77" width="100" height="80" />
+        <dc:Bounds x="770" y="200" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_02l1qlw_di" bpmnElement="Event_02l1qlw">
-        <dc:Bounds x="622" y="99" width="36" height="36" />
+        <dc:Bounds x="922" y="222" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_0ucr6tq_di" bpmnElement="Flow_0ucr6tq">
-        <di:waypoint x="215" y="117" />
-        <di:waypoint x="280" y="117" />
+      <bpmndi:BPMNEdge id="Flow_0ck0bm4_di" bpmnElement="Flow_0ck0bm4">
+        <di:waypoint x="238" y="117" />
+        <di:waypoint x="270" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1s9dt1y_di" bpmnElement="Flow_1s9dt1y">
-        <di:waypoint x="380" y="117" />
-        <di:waypoint x="470" y="117" />
+        <di:waypoint x="680" y="117" />
+        <di:waypoint x="725" y="117" />
+        <di:waypoint x="725" y="240" />
+        <di:waypoint x="770" y="240" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_068ruz7_di" bpmnElement="Flow_068ruz7">
-        <di:waypoint x="570" y="117" />
-        <di:waypoint x="622" y="117" />
+        <di:waypoint x="870" y="240" />
+        <di:waypoint x="922" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rarmfx_di" bpmnElement="Flow_1rarmfx">
+        <di:waypoint x="520" y="240" />
+        <di:waypoint x="550" y="240" />
+        <di:waypoint x="550" y="117" />
+        <di:waypoint x="580" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0dcpq5l" bpmnElement="Flow_1u0ze7e">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="395" y="117" />
+        <di:waypoint x="395" y="240" />
+        <di:waypoint x="420" y="240" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

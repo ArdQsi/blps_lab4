@@ -1,6 +1,7 @@
 package com.webapp.delegators;
 
 import com.webapp.dto.CardDto;
+import com.webapp.repository.UserRepository;
 import com.webapp.service.CardService;
 import jakarta.inject.Named;
 import lombok.RequiredArgsConstructor;

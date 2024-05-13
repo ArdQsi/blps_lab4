@@ -111,7 +111,7 @@ public class UserService {
     }
 
     public Long register(RegisterRequest registerRequest) {
-        Optional<UserEntity> userEntity = userRepository.findUserByEmail(registerRequest.getEmail());
+        Optional<UserEntity> userEntity = userRepository.findUserByLogin(registerRequest.getLogin());
         if (!userEntity.isPresent()) {
             UserEntity user = UserEntity.builder()
                     .firstname(registerRequest.getFirstname())

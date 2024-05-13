@@ -14,7 +14,6 @@ public class SubscriptionRenewalMessageSender implements JavaDelegate {
         delegateExecution.getProcessEngineServices().getRuntimeService()
                 .createMessageCorrelation("subscriptionRenewalMessage")
                 .setVariable("login", delegateExecution.getVariable("login"))
-                .setVariable("email", delegateExecution.getVariable("email"))
                 .correlate();
     }
 }

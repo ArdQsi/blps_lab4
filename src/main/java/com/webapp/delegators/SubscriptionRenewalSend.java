@@ -19,7 +19,6 @@ public class SubscriptionRenewalSend implements JavaDelegate{
     public void execute(DelegateExecution delegateExecution) throws Exception {
         String login = (String) delegateExecution.getVariable("login");
         Optional<UserEntity> userEntity = userRepository.findUserByLogin(login);
-        String email = (String) delegateExecution.getVariable("email");
-        userService.sendMessage("update_sub_mail", userEntity.get().getId(), email);
+        userService.sendMessage("update_sub_mail", userEntity.get().getId(), userEntity.get().getEmail());
     }
 }

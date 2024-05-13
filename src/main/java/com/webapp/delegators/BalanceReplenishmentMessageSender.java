@@ -13,7 +13,6 @@ public class BalanceReplenishmentMessageSender implements JavaDelegate {
         delegateExecution.getProcessEngineServices().getRuntimeService()
                 .createMessageCorrelation("balanceReplenishmentMessage")
                 .setVariable("login", delegateExecution.getVariable("login"))
-                .setVariable("email", delegateExecution.getVariable("email"))
                 .correlate();
     }
 }

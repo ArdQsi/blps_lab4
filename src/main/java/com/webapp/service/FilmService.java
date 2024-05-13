@@ -1,7 +1,6 @@
 package com.webapp.service;
 
 import com.webapp.dto.FilmDto;
-import com.webapp.dto.GenreDto;
 import com.webapp.dto.MessageDto;
 import com.webapp.dto.RequestFilmAddDto;
 import com.webapp.exceptioin.ResourceAlreadyExistsException;
@@ -17,15 +16,12 @@ import com.webapp.repository.GenreRepository;
 import com.webapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.stereotype.Service;
 
 
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -71,28 +67,28 @@ public class FilmService {
         return new MessageDto("Movie was deleted");
     }
 
-    public MessageDto getFilm(String token, Long userId) {
+    public MessageDto getFilm(String token, String login) {
         FilmEntity film = filmRepository.findFilmByToken(token);
-        UserEntity user = userRepository.findUserById(userId);
+        Optional<UserEntity> user = userRepository.findUserByLogin(login);
         if (film == null) {
             throw new ResourceNotFoundException("The movie doesn't exist");
         }
         if (film.getSubscription()) {
             Date subscriptionEndDate;
             try {
-                String subscriptionEndDates = user.getSubscriptionEndDate();
+                String subscriptionEndDates = user.get().getSubscriptionEndDate();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
                 subscriptionEndDate = dateFormat.parse(subscriptionEndDates);
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
-            if (user.getSubscriptionEndDate() != null && subscriptionEndDate.after(new Timestamp(System.currentTimeMillis()))) {
-                userService.addFilmToHistory(film.getId(), userId);
+            if (user.get().getSubscriptionEndDate() != null && subscriptionEndDate.after(new Timestamp(System.currentTimeMillis()))) {
+                userService.addFilmToHistory(film.getId(), login);
                 return new MessageDto("Watching a movie");
             }
             throw new ResourceNotAllowedException("Access is denied");
         }
-        userService.addFilmToHistory(film.getId(), userId);
+        userService.addFilmToHistory(film.getId(), login);
         return new MessageDto("Watching a movie");
     }
 

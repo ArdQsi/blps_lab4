@@ -13,7 +13,7 @@ public class RegistrationMessageSender implements JavaDelegate {
     public void execute(DelegateExecution delegateExecution) throws Exception {
         delegateExecution.getProcessEngineServices().getRuntimeService()
                 .createMessageCorrelation("regMessage")
-                .setVariable("idUser", delegateExecution.getVariable("idUser"))
+                .setVariable("login", delegateExecution.getVariable("login"))
                 .setVariable("email", delegateExecution.getVariable("email"))
                 .correlate();
     }

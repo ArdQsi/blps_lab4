@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class CardDto {
-    private Long userId;
+    private String login;
     private String number;
     private Long month;
     private Long year;

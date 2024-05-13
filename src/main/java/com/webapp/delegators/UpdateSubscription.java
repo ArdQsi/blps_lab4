@@ -17,7 +17,7 @@ public class UpdateSubscription implements JavaDelegate {
     private final UserService userService;
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
-        Long id = Long.valueOf(delegateExecution.getVariable("idUser").toString());
-        userService.updateSubscriptionEndDate(id);
+        String login = (String) delegateExecution.getVariable("login");
+        userService.updateSubscriptionEndDate(login);
     }
 }

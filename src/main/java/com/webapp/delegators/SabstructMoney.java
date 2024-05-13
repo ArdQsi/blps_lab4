@@ -10,6 +10,8 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.Optional;
+
 @Named("sabstructMoney")
 @RequiredArgsConstructor
 public class SabstructMoney implements JavaDelegate {
@@ -18,16 +20,16 @@ public class SabstructMoney implements JavaDelegate {
     private final UserRepository userRepository;
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
-        Long id = Long.valueOf(delegateExecution.getVariable("idUser").toString());
-        UserEntity user = userRepository.findUserById(id);
-        if (user.getBalance() <= 0) {
+        String login = (String) delegateExecution.getVariable("login");
+        Optional<UserEntity> user = userRepository.findUserByLogin(login);
+        if (user.get().getBalance() <= 0) {
             throw new ResourceNotFoundException("Balance is empty!");
         }
-        if (user.getBalance() <= price) {
+        if (user.get().getBalance() <= price) {
             throw new ResourceNotFoundException("Lack of founds to pay!");
         }
 
-        user.setBalance(user.getBalance() - price);
-        userRepository.save(user);
+        user.get().setBalance(user.get().getBalance() - price);
+        userRepository.save(user.get());
     }
 }

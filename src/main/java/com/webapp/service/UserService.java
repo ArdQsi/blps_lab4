@@ -44,18 +44,18 @@ public class UserService {
     private final MailProducer producer;
 
     @Transactional
-    public MessageDto updateSubscription(Long userId) {
-        UserEntity user = userRepository.findUserById(userId);
+    public MessageDto updateSubscription(String login) {
+        Optional<UserEntity> user = userRepository.findUserByLogin(login);
 
-        if (user.getBalance() <= 0) {
+        if (user.get().getBalance() <= 0) {
             throw new ResourceNotFoundException("Balance is empty!");
         }
-        if (user.getBalance() <= price) {
+        if (user.get().getBalance() <= price) {
             throw new ResourceNotFoundException("Lack of founds to pay!");
         }
-        user.setBalance(user.getBalance() - price);
-        userRepository.save(user);
-        updateSubscriptionEndDate(user.getId());
+        user.get().setBalance(user.get().getBalance() - price);
+        userRepository.save(user.get());
+        updateSubscriptionEndDate(user.get().getLogin());
         return new MessageDto("Subscription extended");
     }
 
@@ -69,12 +69,12 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public boolean isActualSubscription(Long userId){
-        UserEntity user = userRepository.findUserById(userId);
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        if (user.getSubscriptionEndDate()!=null) {
+    public boolean isActualSubscription(String login){
+        Optional<UserEntity> user = userRepository.findUserByLogin(login);
+//        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        if (user.get().getSubscriptionEndDate()!=null) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-            LocalDate endDate = LocalDate.parse(user.getSubscriptionEndDate(), formatter);
+            LocalDate endDate = LocalDate.parse(user.get().getSubscriptionEndDate(), formatter);
             LocalDate currentDate = LocalDate.now();
             if (endDate.isAfter(currentDate)) {
                 return true;
@@ -83,13 +83,13 @@ public class UserService {
         return false;
     }
 
-    public void addFilmToHistory(Long filmId, Long userId) {
-        UserEntity user = userRepository.findUserById(userId);
+    public void addFilmToHistory(Long filmId, String login) {
+        Optional<UserEntity> user = userRepository.findUserByLogin(login);
         FilmEntity film = filmRepository.findFilmById(filmId);
 
-        if (user.getUserFilm().stream().noneMatch(f -> Objects.equals(f.getId(), film.getId()))) {
-            user.getUserFilm().add(film);
-            userRepository.save(user);
+        if (user.get().getUserFilm().stream().noneMatch(f -> Objects.equals(f.getId(), film.getId()))) {
+            user.get().getUserFilm().add(film);
+            userRepository.save(user.get());
         }
     }
 
@@ -102,7 +102,7 @@ public class UserService {
                 LocalDate endDate = LocalDate.parse(subscription.getSubscriptionEndDate(), formatter);
                 LocalDate currentDate = LocalDate.now();
                 if (currentDate.isEqual(endDate)) {
-                    updateSubscription(subscription.getId());
+                    updateSubscription(subscription.getLogin());
                 }
             } catch(Exception e) {
                 e.printStackTrace();
@@ -148,15 +148,15 @@ public class UserService {
                 .build();
     }
 
-    public void updateSubscriptionEndDate(Long id) {
+    public void updateSubscriptionEndDate(String login) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        UserEntity user = userRepository.findUserById(id);
+        Optional<UserEntity> user = userRepository.findUserByLogin(login);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(timestamp);
         calendar.add(Calendar.DATE, 30);
         timestamp.setTime(calendar.getTime().getTime());
-        user.setSubscriptionEndDate(timestamp.toString());
-        userRepository.save(user);
+        user.get().setSubscriptionEndDate(timestamp.toString());
+        userRepository.save(user.get());
     }
 
     public MessageDto addModerator(Long id) {

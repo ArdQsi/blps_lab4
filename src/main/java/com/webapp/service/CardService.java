@@ -1,9 +1,6 @@
 package com.webapp.service;
 
 import com.webapp.dto.CardDto;
-import com.webapp.dto.MessageDto;
-import com.webapp.exceptioin.ResourceAlreadyExistsException;
-import com.webapp.exceptioin.ResourceNotFoundException;
 import com.webapp.model.CardEntity;
 import com.webapp.model.UserEntity;
 import com.webapp.repository.CardRepository;
@@ -13,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,8 +20,8 @@ public class CardService {
     private final UserService userService;
 
     public boolean saveCard(CardDto cardDto){
-        UserEntity userEntity = userRepository.findUserById(cardDto.getUserId());
-        if (!checkCard(cardDto) || cardDto.getAmount()<0 || userEntity==null) {
+        Optional<UserEntity> userEntity = userRepository.findUserByLogin(cardDto.getLogin());
+        if (!checkCard(cardDto) || cardDto.getAmount()<0) {
             return false;
         }
         CardEntity card = new CardEntity();
@@ -32,10 +30,10 @@ public class CardService {
         card.setYear(cardDto.getYear());
         card.setName(cardDto.getName());
         card.setSurname(cardDto.getSurname());
-        card.setUser(userEntity);
+        card.setUser(userEntity.get());
 
         cardRepository.save(card);
-        userService.updateBalance(userEntity, cardDto.getAmount());
+        userService.updateBalance(userEntity.orElse(null), cardDto.getAmount());
         return true;
     }
 

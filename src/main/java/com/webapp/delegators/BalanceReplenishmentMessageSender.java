@@ -12,7 +12,7 @@ public class BalanceReplenishmentMessageSender implements JavaDelegate {
     public void execute(DelegateExecution delegateExecution) throws Exception {
         delegateExecution.getProcessEngineServices().getRuntimeService()
                 .createMessageCorrelation("balanceReplenishmentMessage")
-                .setVariable("idUser", delegateExecution.getVariable("idUser"))
+                .setVariable("login", delegateExecution.getVariable("login"))
                 .setVariable("email", delegateExecution.getVariable("email"))
                 .correlate();
     }

@@ -13,8 +13,8 @@ public class SaveMovieToViewingHistory implements JavaDelegate {
     private final FilmService filmService;
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
-        Long id = Long.valueOf(delegateExecution.getVariable("idUser").toString());
+        String login = (String) delegateExecution.getVariable("login");
         String tokenFilm = (String) delegateExecution.getVariable("tokenFilm");
-        filmService.getFilm(tokenFilm, id);
+        filmService.getFilm(tokenFilm, login);
     }
 }

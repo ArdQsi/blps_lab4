@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1jnqxcm" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.22.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.21.0">
+  <bpmn:process id="addFilm" name="addFilm" isExecutable="true" camunda:historyTimeToLive="180">
+    <bpmn:startEvent id="StartEvent_1" name="adding film">
+      <bpmn:extensionElements />
+      <bpmn:outgoing>Flow_139t2g5</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Activity_0s8taci" name="input film data" camunda:assignee="#{currentUser}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="name" label="Name" type="string" />
+          <camunda:formField id="year" label="Year" type="string" />
+          <camunda:formField id="description" label="Description" type="string" />
+          <camunda:formField id="subscription" label="Subscription" type="boolean" />
+          <camunda:formField id="genres" label="Genres" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0y69jd6</bpmn:incoming>
+      <bpmn:outgoing>Flow_1q9ejv0</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_139t2g5" sourceRef="StartEvent_1" targetRef="Activity_06lk1y0" />
+    <bpmn:serviceTask id="Activity_1y06k6y" name="add film" camunda:delegateExpression="#{addFilm}">
+      <bpmn:incoming>Flow_1q9ejv0</bpmn:incoming>
+      <bpmn:outgoing>Flow_193uzjz</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1q9ejv0" sourceRef="Activity_0s8taci" targetRef="Activity_1y06k6y" />
+    <bpmn:endEvent id="Event_1kn5w0c">
+      <bpmn:incoming>Flow_193uzjz</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_193uzjz" sourceRef="Activity_1y06k6y" targetRef="Event_1kn5w0c" />
+    <bpmn:serviceTask id="Activity_1e1cuj8" name="authorization" camunda:delegateExpression="#{authorization}">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_043darz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0y69jd6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0y69jd6" sourceRef="Activity_1e1cuj8" targetRef="Activity_0s8taci" />
+    <bpmn:userTask id="Activity_06lk1y0" name="check auth">
+      <bpmn:extensionElements>
+        <camunda:taskListener expression="${task.execution.setVariable(&#39;login&#39;, task.assignee)}" event="complete" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_139t2g5</bpmn:incoming>
+      <bpmn:outgoing>Flow_043darz</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_043darz" sourceRef="Activity_06lk1y0" targetRef="Activity_1e1cuj8" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="addFilm">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="162" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="154" y="142" width="54" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1kn5w0c_di" bpmnElement="Event_1kn5w0c">
+        <dc:Bounds x="862" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1e1cuj8_di" bpmnElement="Activity_1e1cuj8">
+        <dc:Bounds x="390" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0s8taci_di" bpmnElement="Activity_0s8taci">
+        <dc:Bounds x="540" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1y06k6y_di" bpmnElement="Activity_1y06k6y">
+        <dc:Bounds x="700" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_06lk1y0_di" bpmnElement="Activity_06lk1y0">
+        <dc:Bounds x="240" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_193uzjz_di" bpmnElement="Flow_193uzjz">
+        <di:waypoint x="800" y="117" />
+        <di:waypoint x="862" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_139t2g5_di" bpmnElement="Flow_139t2g5">
+        <di:waypoint x="198" y="117" />
+        <di:waypoint x="240" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0y69jd6_di" bpmnElement="Flow_0y69jd6">
+        <di:waypoint x="490" y="117" />
+        <di:waypoint x="540" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1q9ejv0_di" bpmnElement="Flow_1q9ejv0">
+        <di:waypoint x="640" y="117" />
+        <di:waypoint x="700" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_043darz_di" bpmnElement="Flow_043darz">
+        <di:waypoint x="340" y="117" />
+        <di:waypoint x="390" y="117" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

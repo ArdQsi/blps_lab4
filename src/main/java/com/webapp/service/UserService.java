@@ -71,9 +71,8 @@ public class UserService {
 
     public boolean isActualSubscription(String login){
         Optional<UserEntity> user = userRepository.findUserByLogin(login);
-//        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         if (user.get().getSubscriptionEndDate()!=null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate endDate = LocalDate.parse(user.get().getSubscriptionEndDate(), formatter);
             LocalDate currentDate = LocalDate.now();
             if (endDate.isAfter(currentDate)) {
@@ -98,7 +97,7 @@ public class UserService {
         final var subscriptions = userRepository.findAll();
         for (var subscription : subscriptions){
             try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate endDate = LocalDate.parse(subscription.getSubscriptionEndDate(), formatter);
                 LocalDate currentDate = LocalDate.now();
                 if (currentDate.isEqual(endDate)) {
@@ -133,30 +132,47 @@ public class UserService {
         }
     }
 
-    public AuthenticationResponseDto authenticate(AuthenticationRequest authenticationRequest) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authenticationRequest.getEmail(),
-                        authenticationRequest.getPassword()
-                )
-        );
-        var user = userRepository.findUserByEmail(authenticationRequest.getEmail())
-                .orElseThrow();
-        String jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponseDto.builder()
-                .token(jwtToken)
-                .build();
-    }
+//    public AuthenticationResponseDto authenticate(AuthenticationRequest authenticationRequest) {
+//        authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(
+//                        authenticationRequest.getEmail(),
+//                        authenticationRequest.getPassword()
+//                )
+//        );
+//        var user = userRepository.findUserByEmail(authenticationRequest.getEmail())
+//                .orElseThrow();
+//        String jwtToken = jwtService.generateToken(user);
+//        return AuthenticationResponseDto.builder()
+//                .token(jwtToken)
+//                .build();
+//    }
 
     public void updateSubscriptionEndDate(String login) {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         Optional<UserEntity> user = userRepository.findUserByLogin(login);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(timestamp);
-        calendar.add(Calendar.DATE, 30);
-        timestamp.setTime(calendar.getTime().getTime());
-        user.get().setSubscriptionEndDate(timestamp.toString());
+        LocalDate currentDate;
+        if (user.get().getSubscriptionEndDate() == null) {
+            currentDate = LocalDate.now();
+        } else {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            currentDate = LocalDate.parse(user.get().getSubscriptionEndDate(), formatter);
+        }
+        LocalDate futureDate = currentDate.plusDays(30);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedDate = futureDate.format(formatter);
+        user.get().setSubscriptionEndDate(formattedDate);
         userRepository.save(user.get());
+    }
+
+    public void cancelUpdateSubscriptionEndDate(String login) {
+        Optional<UserEntity> user = userRepository.findUserByLogin(login);
+        if (user.get().getSubscriptionEndDate()!=null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate endDate = LocalDate.parse(user.get().getSubscriptionEndDate(), formatter);
+//            endDate.minusDays(30);
+            LocalDate newEndDate = endDate.minusDays(30);
+            user.get().setSubscriptionEndDate(newEndDate.toString());
+            userRepository.save(user.get());
+        }
     }
 
     public MessageDto addModerator(Long id) {

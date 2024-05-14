@@ -18,6 +18,9 @@ public class UpdateSubscription implements JavaDelegate {
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
         String login = (String) delegateExecution.getVariable("login");
+//        boolean err = (boolean) delegateExecution.getVariable("error");
+//        boolean error = userService.updateSubscriptionEndDate(login);
+//        delegateExecution.setVariable("error", error || err);
         userService.updateSubscriptionEndDate(login);
     }
 }

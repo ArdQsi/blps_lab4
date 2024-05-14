@@ -1,6 +1,7 @@
 package com.webapp.service;
 
 import com.webapp.dto.CardDto;
+import com.webapp.exceptioin.ResourceNotAllowedException;
 import com.webapp.model.CardEntity;
 import com.webapp.model.UserEntity;
 import com.webapp.repository.CardRepository;
@@ -19,10 +20,10 @@ public class CardService {
     private final UserRepository userRepository;
     private final UserService userService;
 
-    public boolean saveCard(CardDto cardDto){
+    public void saveCard(CardDto cardDto){
         Optional<UserEntity> userEntity = userRepository.findUserByLogin(cardDto.getLogin());
         if (!checkCard(cardDto) || cardDto.getAmount()<0) {
-            return false;
+            throw new ResourceNotAllowedException("Balance is negative or not valid card");
         }
         CardEntity card = new CardEntity();
         card.setNumber(cardDto.getNumber());
@@ -34,7 +35,6 @@ public class CardService {
 
         cardRepository.save(card);
         userService.updateBalance(userEntity.orElse(null), cardDto.getAmount());
-        return true;
     }
 
     private boolean checkCard(CardDto cardDto){

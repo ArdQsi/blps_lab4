@@ -23,6 +23,6 @@ public class CheckCard implements JavaDelegate {
         Long cvc = Long.valueOf(delegateExecution.getVariable("cvc").toString());
         Long amount = Long.valueOf(delegateExecution.getVariable("amount").toString());
         CardDto cardDto = new CardDto(login, number, month, year, name, surname, cvc, amount);
-        delegateExecution.setVariable("isCorrectCard", cardService.saveCard(cardDto));
+        cardService.saveCard(cardDto);
     }
 }

@@ -77,7 +77,7 @@ public class FilmService {
             Date subscriptionEndDate;
             try {
                 String subscriptionEndDates = user.get().getSubscriptionEndDate();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 subscriptionEndDate = dateFormat.parse(subscriptionEndDates);
             } catch (ParseException e) {
                 throw new RuntimeException(e);

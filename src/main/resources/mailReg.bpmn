@@ -3,7 +3,7 @@
   <bpmn:collaboration id="Collaboration_0y39q6q">
     <bpmn:participant id="Participant_1bqn70o" name="Service for sending registration messages" processRef="Process_0i4lvrj" />
   </bpmn:collaboration>
-  <bpmn:process id="Process_0i4lvrj" isExecutable="true" camunda:historyTimeToLive="100">
+  <bpmn:process id="Process_0i4lvrj" name="regMail" isExecutable="true" camunda:historyTimeToLive="100">
     <bpmn:endEvent id="Event_1womkeb">
       <bpmn:incoming>Flow_16bzf8e</bpmn:incoming>
     </bpmn:endEvent>

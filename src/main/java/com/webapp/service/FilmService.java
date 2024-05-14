@@ -48,6 +48,7 @@ public class FilmService {
     public List<FilmDto> getAllFilm() {
         List<FilmDto> filmDtos = new ArrayList<>();
         List<FilmEntity> filmEntities = filmRepository.findAll();
+        System.out.println(filmEntities.size());
         for (FilmEntity film : filmEntities) {
             filmDtos.add(FIlmMapper.MAPPER.toDTO(film));
         }

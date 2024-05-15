@@ -3,7 +3,7 @@
   <bpmn:collaboration id="Collaboration_1d75qx0">
     <bpmn:participant id="Participant_1ypjugy" name="A service for sending subscription renewal messages" processRef="subscription-process" />
   </bpmn:collaboration>
-  <bpmn:process id="subscription-process" isExecutable="true" camunda:historyTimeToLive="100">
+  <bpmn:process id="subscription-process" name="subscriptionMail" isExecutable="true" camunda:historyTimeToLive="100">
     <bpmn:endEvent id="Event_12ge1we">
       <bpmn:incoming>Flow_1tbncrc</bpmn:incoming>
     </bpmn:endEvent>

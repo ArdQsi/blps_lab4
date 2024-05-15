@@ -3,7 +3,7 @@
   <bpmn:collaboration id="Collaboration_01h5p0f">
     <bpmn:participant id="Participant_1ypjugy" name="A service for sending balance replenishment messages" processRef="balance-process" />
   </bpmn:collaboration>
-  <bpmn:process id="balance-process" isExecutable="true" camunda:historyTimeToLive="100">
+  <bpmn:process id="balance-process" name="balanceMail" isExecutable="true" camunda:historyTimeToLive="100">
     <bpmn:endEvent id="Event_13ge1we">
       <bpmn:incoming>Flow_1tbncrc</bpmn:incoming>
     </bpmn:endEvent>

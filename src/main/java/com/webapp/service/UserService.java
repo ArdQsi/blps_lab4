@@ -1,8 +1,6 @@
 package com.webapp.service;
 
-import com.webapp.auth.AuthenticationRequest;
 import com.webapp.auth.RegisterRequest;
-import com.webapp.dto.AuthenticationResponseDto;
 import com.webapp.dto.MessageDto;
 import com.webapp.exceptioin.ResourceNotAllowedException;
 import com.webapp.exceptioin.ResourceNotFoundException;
@@ -16,17 +14,13 @@ import com.webapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -39,14 +33,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final FilmRepository filmRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
     private final MailProducer producer;
 
     @Transactional
-    public MessageDto updateSubscription(String login) {
+    public void updateSubscription(String login) {
         Optional<UserEntity> user = userRepository.findUserByLogin(login);
-
         if (user.get().getBalance() <= 0) {
             throw new ResourceNotFoundException("Balance is empty!");
         }
@@ -56,10 +47,9 @@ public class UserService {
         user.get().setBalance(user.get().getBalance() - price);
         userRepository.save(user.get());
         updateSubscriptionEndDate(user.get().getLogin());
-        return new MessageDto("Subscription extended");
     }
 
-    public void sendMessage(String topic, Long id, String email){
+    public void sendMessage(String topic, Long id, String email) {
         ProducerRecord<Long, String> record = new ProducerRecord<>(topic, id, email);
         producer.send(record);
     }
@@ -69,9 +59,9 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public boolean isActualSubscription(String login){
+    public boolean isActualSubscription(String login) {
         Optional<UserEntity> user = userRepository.findUserByLogin(login);
-        if (user.get().getSubscriptionEndDate()!=null) {
+        if (user.get().getSubscriptionEndDate() != null) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate endDate = LocalDate.parse(user.get().getSubscriptionEndDate(), formatter);
             LocalDate currentDate = LocalDate.now();
@@ -86,16 +76,16 @@ public class UserService {
         Optional<UserEntity> user = userRepository.findUserByLogin(login);
         FilmEntity film = filmRepository.findFilmById(filmId);
 
-        if (user.get().getUserFilm().stream().noneMatch(f -> Objects.equals(f.getId(), film.getId()))) {
+        if (user.isPresent() && user.get().getUserFilm().stream().noneMatch(f -> Objects.equals(f.getId(), film.getId()))) {
             user.get().getUserFilm().add(film);
+            film.getFilmUser().add(user.get());
             userRepository.save(user.get());
         }
     }
 
-
     public void automaticDebitingOfMoney() {
         final var subscriptions = userRepository.findAll();
-        for (var subscription : subscriptions){
+        for (var subscription : subscriptions) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate endDate = LocalDate.parse(subscription.getSubscriptionEndDate(), formatter);
@@ -103,7 +93,7 @@ public class UserService {
                 if (currentDate.isEqual(endDate)) {
                     updateSubscription(subscription.getLogin());
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -121,31 +111,11 @@ public class UserService {
                     .role(Role.ROLE_USER)
                     .build();
             userRepository.save(user);
-            String jwtToken = jwtService.generateToken(user);
-
-//            return AuthenticationResponseDto.builder()
-//                    .token(jwtToken)
-//                    .build();
             return user.getId();
         } else {
             throw new ResourceAlreadyExistsException("User already exist");
         }
     }
-
-//    public AuthenticationResponseDto authenticate(AuthenticationRequest authenticationRequest) {
-//        authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(
-//                        authenticationRequest.getEmail(),
-//                        authenticationRequest.getPassword()
-//                )
-//        );
-//        var user = userRepository.findUserByEmail(authenticationRequest.getEmail())
-//                .orElseThrow();
-//        String jwtToken = jwtService.generateToken(user);
-//        return AuthenticationResponseDto.builder()
-//                .token(jwtToken)
-//                .build();
-//    }
 
     public void updateSubscriptionEndDate(String login) {
         Optional<UserEntity> user = userRepository.findUserByLogin(login);
@@ -165,10 +135,9 @@ public class UserService {
 
     public void cancelUpdateSubscriptionEndDate(String login) {
         Optional<UserEntity> user = userRepository.findUserByLogin(login);
-        if (user.get().getSubscriptionEndDate()!=null) {
+        if (user.get().getSubscriptionEndDate() != null) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate endDate = LocalDate.parse(user.get().getSubscriptionEndDate(), formatter);
-//            endDate.minusDays(30);
             LocalDate newEndDate = endDate.minusDays(30);
             user.get().setSubscriptionEndDate(newEndDate.toString());
             userRepository.save(user.get());

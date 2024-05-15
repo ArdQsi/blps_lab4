@@ -1,6 +1,5 @@
 package com.webapp.kafka;
 
-import com.webapp.model.MailEntity;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -30,6 +29,4 @@ public class MailProducer {
     public void send(ProducerRecord<Long, String> record){
         producer.send(record);
     }
-
-
 }

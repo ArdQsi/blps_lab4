@@ -13,7 +13,6 @@ public class Authorization implements JavaDelegate {
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
         String login = (String) delegateExecution.getVariable("login");
-        System.out.println(login);
         userRepository.findUserByLogin(login).orElseThrow();
     }
 }

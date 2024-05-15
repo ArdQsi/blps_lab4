@@ -12,7 +12,7 @@ public class CheckSubscription implements JavaDelegate {
     private final UserService userService;
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
-        String login = (String) delegateExecution.getVariable("login").toString();
+        String login = (String) delegateExecution.getVariable("login");
         delegateExecution.setVariable("isActualSubscription", userService.isActualSubscription(login));
     }
 }

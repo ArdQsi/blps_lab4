@@ -6,7 +6,6 @@ import com.webapp.dto.RequestFilmAddDto;
 import com.webapp.exceptioin.ResourceAlreadyExistsException;
 import com.webapp.exceptioin.ResourceNotAllowedException;
 import com.webapp.exceptioin.ResourceNotFoundException;
-//import com.webapp.kafka.MailProducer;
 import com.webapp.mapper.FIlmMapper;
 import com.webapp.model.FilmEntity;
 import com.webapp.model.GenreEntity;
@@ -27,13 +26,11 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class FilmService {
-
     private final UserRepository userRepository;
     private final FilmRepository filmRepository;
     private final GenreRepository genreRepository;
     private final UserService userService;
 
-    //    private final MailProducer producer;
     public boolean isFilmFree(String token) {
         FilmEntity film = filmRepository.findFilmByToken(token);
         return !film.getSubscription();
@@ -44,11 +41,9 @@ public class FilmService {
         return film != null;
     }
 
-
     public List<FilmDto> getAllFilm() {
         List<FilmDto> filmDtos = new ArrayList<>();
         List<FilmEntity> filmEntities = filmRepository.findAll();
-        System.out.println(filmEntities.size());
         for (FilmEntity film : filmEntities) {
             filmDtos.add(FIlmMapper.MAPPER.toDTO(film));
         }
@@ -57,14 +52,10 @@ public class FilmService {
 
     public MessageDto deleteFilm(String token) {
         FilmEntity filmEntity = filmRepository.findFilmByToken(token);
-
         if (filmEntity == null) {
             throw new ResourceNotFoundException("Movie not found");
         }
         filmRepository.deleteAllByToken(token);
-
-//        ProducerRecord<Long, String> record = new ProducerRecord<>("del_film", filmEntity.getId(), filmEntity.getPath());
-//        producer.send(record);
         return new MessageDto("Movie was deleted");
     }
 
@@ -93,7 +84,6 @@ public class FilmService {
         return new MessageDto("Watching a movie");
     }
 
-
     public List<FilmEntity> findFilmByYear(String year) {
         return filmRepository.findFilmByYear(year);
     }
@@ -121,7 +111,6 @@ public class FilmService {
             newFilmEntity.getGenres().add(genreEntity);
             genreEntity.getFilms().add(newFilmEntity);
         }
-
         newFilmEntity.setName(filmDto.getName());
         newFilmEntity.setYear(filmDto.getYear());
         newFilmEntity.setSubscription(filmDto.getSubscription());
@@ -132,5 +121,4 @@ public class FilmService {
         genreRepository.save(genreEntity);
         return new MessageDto("Movie added successfully");
     }
-
 }

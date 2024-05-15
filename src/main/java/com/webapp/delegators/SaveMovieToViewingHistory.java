@@ -15,6 +15,8 @@ public class SaveMovieToViewingHistory implements JavaDelegate {
     public void execute(DelegateExecution delegateExecution) throws Exception {
         String login = (String) delegateExecution.getVariable("login");
         String tokenFilm = (String) delegateExecution.getVariable("tokenFilm");
+        System.out.println(login);
+        System.out.println(tokenFilm);
         filmService.getFilm(tokenFilm, login);
     }
 }

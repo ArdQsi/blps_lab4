@@ -19,7 +19,6 @@ public class Registration implements JavaDelegate {
         String password = (String) delegateExecution.getVariable("password");
         String email = (String) delegateExecution.getVariable("email");
         String login = (String) delegateExecution.getVariable("login");
-        System.out.println(login);
         RegisterRequest registerRequest = new RegisterRequest(firstname, lastname, email, login, password);
         userService.register(registerRequest);
     }

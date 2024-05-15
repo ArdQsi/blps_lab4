@@ -16,7 +16,7 @@
         <bpmn:flowNodeRef>Activity_1gdb46h</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
-    <bpmn:userTask id="Activity_051qucy" name="all films">
+    <bpmn:userTask id="Activity_051qucy" name="all films" camunda:assignee="#{login}">
       <bpmn:incoming>Flow_03el6s5</bpmn:incoming>
       <bpmn:outgoing>Flow_1ankav3</bpmn:outgoing>
     </bpmn:userTask>
@@ -54,12 +54,12 @@
         <dc:Bounds x="129" y="117" width="880" height="250" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_0b7gc6a_di" bpmnElement="Lane_0b7gc6a" isHorizontal="true">
-        <dc:Bounds x="159" y="117" width="850" height="125" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_0zztwxb_di" bpmnElement="Lane_0zztwxb" isHorizontal="true">
         <dc:Bounds x="159" y="242" width="850" height="125" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0b7gc6a_di" bpmnElement="Lane_0b7gc6a" isHorizontal="true">
+        <dc:Bounds x="159" y="117" width="850" height="125" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_051qucy_di" bpmnElement="Activity_051qucy">
